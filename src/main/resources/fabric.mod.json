@@ -4,8 +4,10 @@
   "version": "${version}",
   "name": "Camerao",
   "icon": "assets/camerao/icon.png",
-  "description": "Most feature packed camera utility while still being lightweight.",
-  "authors": ["plinthlol"],
+  "description": "Most feature packed camera utility while still being minimal.",
+  "authors": [
+    "plinthlol"
+  ],
   "contact": {
     "sources": "https://github.com/plinthlol/camerao"
   },
