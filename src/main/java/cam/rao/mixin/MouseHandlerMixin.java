@@ -2,6 +2,7 @@ package cam.rao.mixin;
 
 import cam.rao.Camerao;
 import net.minecraft.client.CameraType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,6 +14,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MouseHandlerMixin {
     @Inject(method = "onScroll", at = @At("HEAD"), cancellable = true)
     public void camerao$onScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci) {
+        // With a screen open (inventory, chest, chat, ...), leave the scroll alone so
+        // vanilla can route it to the GUI; cancelling here would break screen scrolling.
+        if (Minecraft.getInstance().screen != null) {
+            return;
+        }
+
         // While in free cam, scroll adjusts the fly speed.
         if (Camerao.isFreeCam) {
             // Default: scroll up = faster. Invert flips it.
