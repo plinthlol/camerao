@@ -19,7 +19,7 @@ public class MinecraftMixin {
     }
 
     /** Prevents middle-click item picking while in free cam. */
-    @Inject(method = "pickBlockOrEntity", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "pickBlock", at = @At("HEAD"), cancellable = true)
     public void camerao$onPickBlock(CallbackInfo ci) {
         if (Camerao.isFreeCam) {
             ci.cancel();

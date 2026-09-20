@@ -9,7 +9,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.CameraType;
@@ -72,16 +72,16 @@ public class Camerao implements ClientModInitializer {
     public void onInitializeClient() {
         config.load();
 
-        perspectiveKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.activate", InputConstants.Type.KEYBOARD, InputConstants.KEY_LALT, CATEGORY));
-        configScreenKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
+        perspectiveKeyBind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                "camerao.key.activate", InputConstants.Type.KEYSYM, InputConstants.KEY_LALT, CATEGORY));
+        configScreenKeyBind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "camerao.key.menu", InputConstants.UNKNOWN.getValue(), CATEGORY));
-        zoomKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.zoom", InputConstants.Type.KEYBOARD, InputConstants.KEY_C, CATEGORY));
-        freeCamKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.freecam", InputConstants.Type.KEYBOARD, InputConstants.KEY_V, CATEGORY));
-        detachKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.detach", InputConstants.Type.KEYBOARD, InputConstants.KEY_G, CATEGORY));
+        zoomKeyBind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                "camerao.key.zoom", InputConstants.Type.KEYSYM, InputConstants.KEY_C, CATEGORY));
+        freeCamKeyBind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                "camerao.key.freecam", InputConstants.Type.KEYSYM, InputConstants.KEY_V, CATEGORY));
+        detachKeyBind = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                "camerao.key.detach", InputConstants.Type.KEYSYM, InputConstants.KEY_G, CATEGORY));
 
         ClientTickEvents.START_CLIENT_TICK.register(Freecam::preTick);
         ClientTickEvents.END_CLIENT_TICK.register(this::onTickEnd);
@@ -96,7 +96,7 @@ public class Camerao implements ClientModInitializer {
 
     private void onTickEnd(Minecraft client) {
         if (configScreenKeyBind.consumeClick()) {
-            client.setScreenAndShow(CameraoConfigScreen.build(client.gui.screen()));
+            client.setScreenAndShow(CameraoConfigScreen.build(client.screen));
         }
 
         // Detach camera keybind: park the camera, keep full player control.

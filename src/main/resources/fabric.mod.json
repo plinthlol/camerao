@@ -5,7 +5,9 @@
   "name": "Camerao",
   "icon": "assets/camerao/icon.png",
   "description": "Most feature packed camera utility while still being lightweight.",
-  "authors": ["plinthlol"],
+  "authors": [
+    "plinthlol"
+  ],
   "contact": {
     "sources": "https://github.com/plinthlol/camerao"
   },
@@ -24,8 +26,8 @@
   ],
   "depends": {
     "fabricloader": ">=0.19.5",
-    "minecraft": "~26.3",
-    "java": ">=25",
+    "minecraft": "~1.21.11",
+    "java": ">=21",
     "fabric-api": "*",
     "cloth-config": "*"
   },

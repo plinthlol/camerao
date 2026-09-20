@@ -2,8 +2,8 @@ package cam.rao.mixin;
 
 import cam.rao.Camerao;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.Hud;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(Hud.class)
+@Mixin(Gui.class)
 public class HudMixin {
     /** Makes the HUD (hotbar, health, etc.) correspond to the player, not the free cam entity. */
     @Inject(method = "getCameraPlayer", at = @At("HEAD"), cancellable = true)
@@ -23,9 +23,9 @@ public class HudMixin {
     }
 
     /** Don't render equipped-item overlays (pumpkin, powder snow...) while in free cam. */
-    @Inject(method = "extractTextureOverlay", at = @At("HEAD"), cancellable = true)
-    public void camerao$onExtractTextureOverlay(GuiGraphicsExtractor graphics, Identifier texture,
-                                                float alpha, CallbackInfo ci) {
+    @Inject(method = "renderTextureOverlay", at = @At("HEAD"), cancellable = true)
+    public void camerao$onRenderTextureOverlay(GuiGraphics graphics, Identifier texture,
+                                               float alpha, CallbackInfo ci) {
         if (Camerao.isFreeCam) {
             ci.cancel();
         }

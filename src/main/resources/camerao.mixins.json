@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "cam.rao.mixin",
-  "compatibilityLevel": "JAVA_25",
+  "compatibilityLevel": "JAVA_21",
   "client": [
     "BlockStateBaseMixin",
     "CameraMixin",
@@ -9,10 +9,10 @@
     "ClientPacketListenerMixin",
     "EntityMixin",
     "EntityRenderDispatcherMixin",
-    "FirstPersonHandsAndItemsMixin",
+    "ItemInHandRendererMixin",
     "GameRendererMixin",
     "HudMixin",
-    "LevelExtractorMixin",
+    "LevelRendererMixin",
     "LivingEntityMixin",
     "MouseHandlerMixin",
     "MinecraftMixin",

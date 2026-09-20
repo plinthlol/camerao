@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
+	id 'fabric-loom' version "${loom_version}"
 	id 'maven-publish'
 }
 
@@ -16,18 +16,23 @@ repositories {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
+	// Mixin annotations and processor (loader ships it at runtime, we need it at compile time).
+	annotationProcessor "net.fabricmc:sponge-mixin:0.17.4+mixin.0.8.7"
+	implementation "net.fabricmc:sponge-mixin:0.17.4+mixin.0.8.7"
+
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	// Cloth Config for the settings GUI
-	implementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
+	modImplementation("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
 		exclude(group: "net.fabricmc.fabric-api")
 	}
 
 	// Mod Menu (optional at runtime, provides the config screen hook)
-	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {
@@ -40,14 +45,22 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+	it.options.release = 21
 }
 
 java {
 	// Sources jar generation is disabled; re-add `withSourcesJar()` to restore it.
 
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+loom {
+	// 1.21.11 is still obfuscated: feed mojmap->intermediary mappings to the mixin
+	// annotation processor so refmaps are generated at compile time.
+	mixin {
+		useLegacyMixinAp = true
+	}
 }
 
 jar {
