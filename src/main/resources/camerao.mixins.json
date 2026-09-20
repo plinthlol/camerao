@@ -11,7 +11,7 @@
     "EntityRenderDispatcherMixin",
     "ItemInHandRendererMixin",
     "GameRendererMixin",
-    "HudMixin",
+    "HudCrosshairMixin","HudMixin",
     "LevelExtractorMixin",
     "LivingEntityMixin",
     "MouseHandlerMixin",
