@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 /**
  * Makes the first person hand follow the free cam rotation instead of the player's.
- * 1.21.11 passes the real player to submitHandsWithItems (so swing/item state comes
+ * 1.21.11 passes the real player to renderHandsWithItems (so swing/item state comes
  * along for free); we redirect only the view rotation and walk-bob reads.
  */
 @Mixin(ItemInHandRenderer.class)
@@ -21,7 +21,7 @@ public class ItemInHandRendererMixin {
         return Camerao.isFreeCam ? Freecam.getFreeCam() : null;
     }
 
-    @Redirect(method = "submitHandsWithItems",
+    @Redirect(method = "renderHandsWithItems",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getXRot(F)F"))
     public float camerao$handXRot(LocalPlayer player, float partialTick) {
         FreeCamEntity camera = camerao$camera();
@@ -31,29 +31,29 @@ public class ItemInHandRendererMixin {
         return player.getXRot(partialTick);
     }
 
-    @Redirect(method = "submitHandsWithItems",
+    @Redirect(method = "renderHandsWithItems",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getViewXRot(F)F"))
     public float camerao$handViewXRot(LocalPlayer player, float partialTick) {
         FreeCamEntity camera = camerao$camera();
         return camera != null ? camera.getViewXRot(partialTick) : player.getViewXRot(partialTick);
     }
 
-    @Redirect(method = "submitHandsWithItems",
+    @Redirect(method = "renderHandsWithItems",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;getViewYRot(F)F"))
     public float camerao$handViewYRot(LocalPlayer player, float partialTick) {
         FreeCamEntity camera = camerao$camera();
         return camera != null ? camera.getViewYRot(partialTick) : player.getViewYRot(partialTick);
     }
 
-    /** Ordinals 0/1 of Mth.lerp(FFF) in submitHandsWithItems are the xBob/yBob walk-bob lerps. */
-    @Redirect(method = "submitHandsWithItems",
+    /** Ordinals 0/1 of Mth.lerp(FFF) in renderHandsWithItems are the xBob/yBob walk-bob lerps. */
+    @Redirect(method = "renderHandsWithItems",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F", ordinal = 0))
     public float camerao$handBobX(float delta, float start, float end) {
         FreeCamEntity camera = camerao$camera();
         return camera != null ? Mth.lerp(delta, camera.xBobO, camera.xBob) : Mth.lerp(delta, start, end);
     }
 
-    @Redirect(method = "submitHandsWithItems",
+    @Redirect(method = "renderHandsWithItems",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/util/Mth;lerp(FFF)F", ordinal = 1))
     public float camerao$handBobY(float delta, float start, float end) {
         FreeCamEntity camera = camerao$camera();
