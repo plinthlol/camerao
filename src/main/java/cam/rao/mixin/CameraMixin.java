@@ -4,6 +4,7 @@ import cam.rao.Camerao;
 import cam.rao.CameraDuck;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.level.Level;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -42,7 +43,7 @@ public abstract class CameraMixin {
      */
     @Inject(method = "setup",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V", ordinal = 2, shift = At.Shift.AFTER))
-    public void camerao$lockRotationAndPark(Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
+    public void camerao$lockRotationAndPark(Level level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
         if (Camerao.isCamDetached) {
             // Detached camera: park position and rotation exactly where the player detached.
             this.setRotation(Camerao.detachedYRot, Camerao.detachedXRot);
