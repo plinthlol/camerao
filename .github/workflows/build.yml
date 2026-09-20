@@ -1,0 +1,138 @@
+name: CI/CD
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to release'
+        required: true
+        type: string
+      github_release:
+        description: 'Create GitHub release'
+        required: false
+        type: boolean
+        default: true
+      modrinth_release:
+        description: 'Publish to Modrinth (ignored if GitHub release is off)'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create tag if it doesn't exist
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          git fetch --tags
+          if git rev-parse "${{ steps.tag.outputs.tag }}" >/dev/null 2>&1; then
+            echo "Tag ${{ steps.tag.outputs.tag }} already exists, reusing it."
+          else
+            echo "Creating tag ${{ steps.tag.outputs.tag }} on $(git rev-parse --abbrev-ref HEAD)"
+            git tag "${{ steps.tag.outputs.tag }}"
+            git push origin "${{ steps.tag.outputs.tag }}"
+          fi
+
+      - name: Determine mod version
+        id: modver
+        run: |
+          USE_TAG=false
+          if [ "${{ github.event_name }}" = "push" ]; then
+            USE_TAG=true
+          elif [ "${{ github.event_name == 'workflow_dispatch' && inputs.github_release && inputs.modrinth_release }}" = "true" ]; then
+            USE_TAG=true
+          fi
+
+          if [ "$USE_TAG" = "true" ]; then
+            echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+
+      - name: Set version in build.gradle
+        if: steps.modver.outputs.version != ''
+        run: sed -i "s/^version = '.*'/version = '${{ steps.modver.outputs.version }}'/" build.gradle
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Build
+        run: |
+          set -o pipefail
+          ./gradlew build --stacktrace 2>&1 | tee build.log
+
+      - name: Add build log to summary
+        if: always()
+        run: |
+          echo "## Build Log" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          tail -c 900000 build.log >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Add branch/tag suffix to jar names
+        run: |
+          SAFE_REF=$(echo "${{ github.ref_name }}" | tr '/' '-')
+          for f in build/libs/*.jar; do
+            [ -e "$f" ] || continue
+            mv "$f" "${f%.jar}-${SAFE_REF}.jar"
+          done
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: camerao-jars
+          path: build/libs/*.jar
+          retention-days: ${{ (github.event_name == 'workflow_dispatch' && !inputs.github_release) && 1 || 90 }}
+
+      - name: Release
+        if: github.event_name == 'push' || inputs.github_release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          files: build/libs/*.jar
+          generate_release_notes: true
+
+      - name: Get versions
+        id: ver
+        run: |
+          echo "mc=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Modrinth
+        if: github.event_name == 'push' || (inputs.github_release && inputs.modrinth_release)
+        uses: Kir-Antipov/mc-publish@v3.3.1
+        with:
+          modrinth-id: fKpM0IBf
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          files: build/libs/*.jar
+          loaders: fabric
+          game-versions: ${{ steps.ver.outputs.mc }}
+          version: ${{ steps.modver.outputs.version || '1.0.0' }}
+          name: "Camerao ${{ steps.modver.outputs.version || '1.0.0' }} (MC ${{ steps.ver.outputs.mc }})"
+          version-type: release
+          changelog: ${{ github.event.head_commit.message }}

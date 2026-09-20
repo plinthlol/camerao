@@ -1,0 +1,60 @@
+{
+  "key.category.camerao.camerao": "Camerao",
+  "camerao.key.activate": "Activate perspective",
+  "camerao.key.menu": "Open camerao settings",
+  "camerao.key.zoom": "Zoom",
+  "camerao.key.freecam": "Activate freecam",
+  "camerao.key.detach": "Detach camera",
+
+  "camerao.config.title": "Camerao settings",
+  "camerao.config.category.perspective": "Perspective",
+  "camerao.config.category.zoom": "Zoom",
+  "camerao.config.category.freecam": "Freecam",
+
+  "camerao.config.mode": "Activation mode",
+  "camerao.config.mode.tooltip": "How the perspective key behaves.\nHold: look around only while holding the key.\nToggle: press once to start, press again to stop.",
+
+  "camerao.config.perspective": "Camera view",
+  "camerao.config.perspective.tooltip": "The view used while the perspective is active.\nExample: 'Third person back' shows yourself from behind, like a regular third person camera.",
+
+  "camerao.config.max_yaw": "Yaw limit",
+  "camerao.config.max_yaw.tooltip": "Yaw is the horizontal turn - left and right.\nWhile active, you can only turn this far from where you started.\nExample: 90 lets you turn 90 left or 90 right.\n360 = no limit.",
+
+  "camerao.config.max_pitch": "Pitch limit",
+  "camerao.config.max_pitch.tooltip": "Pitch is the vertical look - up and down.\nWhile active, you can only look this far up or down from the center.\nExample: 45 lets you look 45 up or 45 down.\n90 = full vanilla range.",
+
+  "camerao.config.invert_y": "Invert look up/down",
+  "camerao.config.invert_y.tooltip": "Swaps mouse up and down while the perspective is active.\nEnable if moving the mouse up looks down instead.",
+
+  "camerao.config.smooth_camera": "Cinematic camera",
+  "camerao.config.smooth_camera.tooltip": "Uses vanilla cinematic smoothing while the perspective is active.\nThe camera drifts softly instead of following the mouse 1:1.",
+
+  "camerao.config.zoom_out": "Scroll camera zoom",
+  "camerao.config.zoom_out.tooltip": "While the perspective is active, scroll to move the camera closer or further away.\nScroll down to pull the camera out, scroll up to bring it back.",
+
+  "camerao.config.zoom_in_limit": "Camera zoom in limit",
+  "camerao.config.zoom_in_limit.tooltip": "Closest camera distance while scroll zooming.\nExample: 2 stops the camera 2 blocks from your body.",
+
+  "camerao.config.zoom_out_limit": "Camera zoom out limit",
+  "camerao.config.zoom_out_limit.tooltip": "Furthest camera distance while scroll zooming.\nExample: 32 lets you pull the camera 32 blocks away.",
+
+  "camerao.config.zoom_factor": "Default zoom %",
+  "camerao.config.zoom_factor.tooltip": "Zoom strength when you press the zoom key.\nExample: 300 zooms to 3x. 100 = no zoom.",
+
+  "camerao.config.show_zoom_indicator": "Show zoom %",
+  "camerao.config.show_zoom_indicator.tooltip": "Shows a number above the hotbar while zooming.\nExample: 100% means no zoom, 300% means 3x zoom.",
+
+  "camerao.config.invert_scroll": "Invert scroll",
+  "camerao.config.invert_scroll.tooltip": "Swaps the scroll direction for zooming and freecam speed.\nOff: scroll down zooms in, scroll up makes the freecam faster.\nOn: the opposite.",
+
+  "camerao.config.freecam_mode": "Activation mode",
+  "camerao.config.freecam_mode.tooltip": "How the freecam key behaves.\nToggle: press once to start, press again to stop.\nHold: freecam stays on while the key is held.",
+
+  "camerao.config.freecam_collision": "Collision",
+  "camerao.config.freecam_collision.tooltip": "When enabled, the camera stops at blocks instead of flying through them.\nOff: fly through anything.",
+
+  "camerao.config.freecam_keep_sneak": "Keep sneak",
+  "camerao.config.freecam_keep_sneak.tooltip": "If you activate freecam while sneaking, your player stays crouched\nuntil you leave freecam, even though your keys control the camera.",
+
+  "camerao.hud.zoom": "%s%%"
+}
