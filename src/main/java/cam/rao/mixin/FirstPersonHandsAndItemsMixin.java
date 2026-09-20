@@ -1,7 +1,7 @@
 package cam.rao.mixin;
 
 import cam.rao.Camerao;
-import cam.rao.freecam.FreeCam;
+import cam.rao.freecam.FreeCamEntity;
 import cam.rao.freecam.Freecam;
 import net.minecraft.client.player.FirstPersonHandsAndItems;
 import net.minecraft.client.player.LocalPlayer;
@@ -22,7 +22,7 @@ public class FirstPersonHandsAndItemsMixin {
     public void camerao$onExtractRenderState(LocalPlayer player, float partialTicks,
                                              FirstPersonHandsAndItemsRenderState state, CallbackInfo ci) {
         if (Camerao.isFreeCam) {
-            FreeCam camera = Freecam.getFreeCam();
+            FreeCamEntity camera = Freecam.getFreeCam();
             if (camera == null) {
                 return;
             }

@@ -152,6 +152,13 @@ public final class CameraoConfigScreen {
                 .setSaveConsumer(config::setFreeCamKeepSneak)
                 .build());
 
+        freeCam.addEntry(entryBuilder.startBooleanToggle(
+                        label("camerao.config.freecam_exit_on_damage"),
+                        config.isFreeCamExitOnDamage())
+                .setTooltip(tooltip("camerao.config.freecam_exit_on_damage.tooltip"))
+                .setSaveConsumer(config::setFreeCamExitOnDamage)
+                .build());
+
         return builder.build();
     }
 }

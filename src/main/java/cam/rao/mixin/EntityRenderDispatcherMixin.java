@@ -1,7 +1,7 @@
 package cam.rao.mixin;
 
 import cam.rao.Camerao;
-import cam.rao.freecam.FreeCam;
+import cam.rao.freecam.FreeCamEntity;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.world.entity.Entity;
@@ -16,7 +16,7 @@ public class EntityRenderDispatcherMixin {
     @Inject(method = "shouldRender", at = @At("HEAD"), cancellable = true)
     public void camerao$shouldRender(Entity entity, Frustum frustum, double camX, double camY,
                                      double camZ, float partialTicks, CallbackInfoReturnable<Boolean> cir) {
-        if (entity instanceof FreeCam) {
+        if (entity instanceof FreeCamEntity) {
             cir.setReturnValue(false);
         }
     }

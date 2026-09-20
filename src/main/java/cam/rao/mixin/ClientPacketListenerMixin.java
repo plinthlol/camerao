@@ -1,7 +1,6 @@
 package cam.rao.mixin;
 
 import cam.rao.Camerao;
-import cam.rao.freecam.Freecam;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,10 +14,7 @@ public class ClientPacketListenerMixin {
     @Inject(method = "handleRespawn", at = @At("TAIL"))
     public void camerao$onRespawn(CallbackInfo ci) {
         if (Camerao.isFreeCam) {
-            // Clear the flag first so OptionsMixin does not eat the camera restore.
-            Camerao.isFreeCam = false;
-            Camerao.freeCamSpeed = Camerao.FREECAM_DEFAULT_SPEED;
-            Freecam.disable(Minecraft.getInstance());
+            Camerao.forceStopFreeCam(Minecraft.getInstance());
         }
     }
 }

@@ -56,5 +56,8 @@
   "camerao.config.freecam_keep_sneak": "Keep sneak",
   "camerao.config.freecam_keep_sneak.tooltip": "If you activate freecam while sneaking, your player stays crouched\nuntil you leave freecam, even though your keys control the camera.",
 
+  "camerao.config.freecam_exit_on_damage": "Exit on damage",
+  "camerao.config.freecam_exit_on_damage.tooltip": "Leaves freecam as soon as your body takes damage,\nso you are back in control when attacked.\nWhile in freecam your body also ignores knockback,\nso attackers cannot push it around.\nOff: stay in freecam when hit.",
+
   "camerao.hud.zoom": "%s%%"
 }

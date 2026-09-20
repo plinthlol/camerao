@@ -30,6 +30,7 @@ public class CameraoConfig {
     private Mode freeCamMode = Mode.TOGGLE;
     private boolean freeCamCollision = false;
     private boolean freeCamKeepSneak = true;
+    private boolean freeCamExitOnDamage = true;
     private int zoomMagnification = 300;
     private boolean showZoomIndicator = true;
     private boolean invertScroll = false;
@@ -162,6 +163,14 @@ public class CameraoConfig {
         this.freeCamKeepSneak = freeCamKeepSneak;
     }
 
+    public synchronized boolean isFreeCamExitOnDamage() {
+        return freeCamExitOnDamage;
+    }
+
+    public synchronized void setFreeCamExitOnDamage(boolean freeCamExitOnDamage) {
+        this.freeCamExitOnDamage = freeCamExitOnDamage;
+    }
+
     public synchronized void save() {
         File folder = new File(Minecraft.getInstance().gameDirectory, "config");
         if (!folder.isDirectory() && !folder.mkdirs()) {
@@ -201,6 +210,7 @@ public class CameraoConfig {
             setFreeCamMode(loaded.freeCamMode);
             setFreeCamCollision(loaded.freeCamCollision);
             setFreeCamKeepSneak(loaded.freeCamKeepSneak);
+            setFreeCamExitOnDamage(loaded.freeCamExitOnDamage);
         } catch (Exception e) {
             Camerao.LOGGER.error("Failed to read config file {}", file.getName(), e);
         }

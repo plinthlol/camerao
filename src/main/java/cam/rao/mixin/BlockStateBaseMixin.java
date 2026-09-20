@@ -1,7 +1,7 @@
 package cam.rao.mixin;
 
 import cam.rao.Camerao;
-import cam.rao.freecam.FreeCam;
+import cam.rao.freecam.FreeCamEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -27,7 +27,7 @@ public abstract class BlockStateBaseMixin {
             return;
         }
         if (context instanceof EntityCollisionContext entityContext
-                && entityContext.getEntity() instanceof FreeCam) {
+                && entityContext.getEntity() instanceof FreeCamEntity) {
             cir.setReturnValue(Shapes.empty());
         }
     }

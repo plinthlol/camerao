@@ -2,7 +2,7 @@ package cam.rao.mixin;
 
 import cam.rao.Camerao;
 import cam.rao.CameraDuck;
-import cam.rao.freecam.FreeCam;
+import cam.rao.freecam.FreeCamEntity;
 import cam.rao.freecam.Freecam;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -33,7 +33,7 @@ public class EntityMixin implements CameraDuck {
     public void camerao$changeCameraLookDirection(double xDelta, double yDelta, CallbackInfo ci) {
         if (Camerao.isFreeCam && (Object) this == Minecraft.getInstance().player) {
             // Route mouse look to the free cam instead of the player.
-            FreeCam freeCam = Freecam.getFreeCam();
+            FreeCamEntity freeCam = Freecam.getFreeCam();
             if (freeCam != null) {
                 freeCam.turn(xDelta * Camerao.zoomFovFactor, yDelta * Camerao.zoomFovFactor);
             }
@@ -71,11 +71,21 @@ public class EntityMixin implements CameraDuck {
         }
     }
 
+    /** While in free cam, ignores server-sent motion (knockback, explosions, ...) on the
+     *  real player so the body stays parked where you left it instead of drifting away
+     *  from attackers while the camera watches from elsewhere. */
+    @Inject(method = "lerpMotion", at = @At("HEAD"), cancellable = true)
+    public void camerao$noMotionWhileFreeCam(net.minecraft.world.phys.Vec3 motion, CallbackInfo ci) {
+        if (Camerao.isFreeCam && (Object) this == Minecraft.getInstance().player) {
+            ci.cancel();
+        }
+    }
+
     /** Prevents the player and the free cam entity from pushing each other. */
     @Inject(method = "push(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"), cancellable = true)
     public void camerao$noPush(Entity entity, CallbackInfo ci) {
         if (Camerao.isFreeCam || Camerao.isCamDetached) {
-            FreeCam drone = Camerao.getActiveDrone();
+            FreeCamEntity drone = Camerao.getActiveDrone();
             if (entity == drone || (Object) this == drone) {
                 ci.cancel();
             }

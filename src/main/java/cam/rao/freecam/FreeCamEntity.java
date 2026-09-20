@@ -25,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
  * it is added to the client world so vanilla ticks, interpolates and streams
  * chunks around it, but a dispatcher mixin keeps it from being rendered.
  */
-public class FreeCam extends AbstractClientPlayer {
+public class FreeCamEntity extends AbstractClientPlayer {
     private static final double DIAGONAL_MULTIPLIER = Mth.sin((float) Math.toRadians(45));
 
     private final ClientInput input = new KeyboardInput(Minecraft.getInstance().options);
@@ -36,7 +36,7 @@ public class FreeCam extends AbstractClientPlayer {
     public float yBob;
     public float yBobO;
 
-    public FreeCam(ClientLevel level, double x, double y, double z, float yaw, float pitch) {
+    public FreeCamEntity(ClientLevel level, double x, double y, double z, float yaw, float pitch) {
         super(level, new GameProfile(UUID.randomUUID(), "FreeCam"));
         setId(-420);
         snapTo(x, y, z, yaw, pitch);

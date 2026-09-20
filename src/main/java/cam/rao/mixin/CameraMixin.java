@@ -2,7 +2,7 @@ package cam.rao.mixin;
 
 import cam.rao.Camerao;
 import cam.rao.CameraDuck;
-import cam.rao.freecam.FreeCam;
+import cam.rao.freecam.FreeCamEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -93,7 +93,7 @@ public abstract class CameraMixin {
         if (entity == null || this.entity == null) {
             return;
         }
-        if (entity instanceof FreeCam || this.entity instanceof FreeCam) {
+        if (entity instanceof FreeCamEntity || this.entity instanceof FreeCamEntity) {
             this.eyeHeightOld = this.eyeHeight = entity.getEyeHeight();
         }
     }

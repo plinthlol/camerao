@@ -3,7 +3,7 @@ package cam.rao;
 import cam.rao.config.CameraoConfig;
 import cam.rao.config.CameraoConfigScreen;
 import cam.rao.freecam.Freecam;
-import cam.rao.freecam.FreeCam;
+import cam.rao.freecam.FreeCamEntity;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -129,7 +129,7 @@ public class Camerao implements ClientModInitializer {
             if (client.player == null || client.level == null) {
                 stopFreeCam(client);
             }
-            // The FreeCam entity is ticked by vanilla; player input is blanked in preTick.
+            // The FreeCamEntity is ticked by vanilla; player input is blanked in preTick.
         }
 
         boolean zoomHeld = zoomKeyBind.isDown();
@@ -178,13 +178,18 @@ public class Camerao implements ClientModInitializer {
     }
 
     private void stopFreeCam(Minecraft client) {
+        forceStopFreeCam(client);
+    }
+
+    /** Tears down free cam and restores the real player; safe to call from mixins on the main thread. */
+    public static void forceStopFreeCam(Minecraft client) {
         // Clear the flag first so OptionsMixin does not eat the camera restore inside disable().
         isFreeCam = false;
         Freecam.disable(client);
         freeCamSpeed = FREECAM_DEFAULT_SPEED;
     }
 
-    public static FreeCam getActiveDrone() {
+    public static FreeCamEntity getActiveDrone() {
         return Freecam.getFreeCam();
     }
 

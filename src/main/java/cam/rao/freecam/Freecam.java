@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Input;
  */
 public final class Freecam {
     private static boolean enabled;
-    private static FreeCam freeCam;
+    private static FreeCamEntity freeCam;
     private static CameraType rememberedCameraType;
     /** Whether the player was sneaking when free cam was activated. */
     private static boolean sneakAtEnable;
@@ -27,12 +27,14 @@ public final class Freecam {
         return enabled;
     }
 
-    public static FreeCam getFreeCam() {
+    public static FreeCamEntity getFreeCam() {
         return freeCam;
     }
 
-    /** Runs at the start of every client tick: keep the real player's input blanked.
-     *  With "Keep sneak" on, the sneak state captured at activation is preserved. */
+    /** Runs at the start of every client tick: replaces the real player's input with a
+     *  blank {@link ClientInput} so it ignores all keys while the camera entity moves freely
+     *  (the original {@link KeyboardInput} is restored in {@link #disable}). With "Keep sneak"
+     *  on, the sneak state captured at activation is preserved in the blank input. */
     public static void preTick(Minecraft mc) {
         if (enabled && mc.player != null && mc.player.input instanceof KeyboardInput) {
             ClientInput blank = new ClientInput();
@@ -63,7 +65,7 @@ public final class Freecam {
         mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
         // Spawn one block above the head so the body is in view.
         // Spawn at the player's eye level so the detached camera sits right at your head.
-        freeCam = new FreeCam((ClientLevel) mc.level,
+        freeCam = new FreeCamEntity((ClientLevel) mc.level,
                 mc.player.getX(),
                 mc.player.getEyeY() - 0.4,
                 mc.player.getZ(),
