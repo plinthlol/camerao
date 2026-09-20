@@ -11,7 +11,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.MoveSimulationType;
 import net.minecraft.world.entity.player.Input;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.block.state.BlockState;
@@ -147,11 +146,6 @@ public class FreeCamEntity extends AbstractClientPlayer {
         return true;
     }
 
-    @Override
-    public MoveSimulationType getMoveSimulationType() {
-        return MoveSimulationType.SERVER_AND_CLIENT;
-    }
-
     // Noclip-friendly behavior: never collide, never splash, never take fall damage.
 
     @Override
@@ -161,7 +155,7 @@ public class FreeCamEntity extends AbstractClientPlayer {
 
     @Override
     public PushReaction getPistonPushReaction() {
-        return PushReaction.IGNORE_ENTITY;
+        return PushReaction.IGNORE;
     }
 
     @Override
@@ -207,35 +201,7 @@ public class FreeCamEntity extends AbstractClientPlayer {
         return this.getYRot();
     }
 
-    // Keep the first person hand rendering working with the player's item state.
-
-    @Override
-    public LivingEntity.SwingDescription getCurrentSwing() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null ? mc.player.getCurrentSwing() : null;
-    }
-
-    @Override
-    public float getSwingAnimation(float partialTicks) {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null ? mc.player.getSwingAnimation(partialTicks) : 0.0F;
-    }
-
-    @Override
-    public boolean isSwinging() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null && mc.player.isSwinging();
-    }
-
-    @Override
-    public int getUseItemRemainingTicks() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null ? mc.player.getUseItemRemainingTicks() : 0;
-    }
-
-    @Override
-    public boolean isUsingItem() {
-        Minecraft mc = Minecraft.getInstance();
-        return mc.player != null && mc.player.isUsingItem();
-    }
+    // Note: vanilla passes the real player (Minecraft.player) to hand rendering,
+    // so swing and item state follow the real player automatically. The
+    // ItemInHandRendererMixin routes only the view rotation/bob to this entity.
 }

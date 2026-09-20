@@ -9,7 +9,7 @@
     "ClientPacketListenerMixin",
     "EntityMixin",
     "EntityRenderDispatcherMixin",
-    "FirstPersonHandsAndItemsMixin",
+    "ItemInHandRendererMixin",
     "GameRendererMixin",
     "HudMixin",
     "LevelExtractorMixin",

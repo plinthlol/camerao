@@ -73,15 +73,15 @@ public class Camerao implements ClientModInitializer {
         config.load();
 
         perspectiveKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.activate", InputConstants.Type.KEYBOARD, InputConstants.KEY_LALT, CATEGORY));
+                "camerao.key.activate", InputConstants.Type.KEYSYM, InputConstants.KEY_LALT, CATEGORY));
         configScreenKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "camerao.key.menu", InputConstants.UNKNOWN.getValue(), CATEGORY));
         zoomKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.zoom", InputConstants.Type.KEYBOARD, InputConstants.KEY_C, CATEGORY));
+                "camerao.key.zoom", InputConstants.Type.KEYSYM, InputConstants.KEY_C, CATEGORY));
         freeCamKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.freecam", InputConstants.Type.KEYBOARD, InputConstants.KEY_V, CATEGORY));
+                "camerao.key.freecam", InputConstants.Type.KEYSYM, InputConstants.KEY_V, CATEGORY));
         detachKeyBind = KeyMappingHelper.registerKeyMapping(new KeyMapping(
-                "camerao.key.detach", InputConstants.Type.KEYBOARD, InputConstants.KEY_G, CATEGORY));
+                "camerao.key.detach", InputConstants.Type.KEYSYM, InputConstants.KEY_G, CATEGORY));
 
         ClientTickEvents.START_CLIENT_TICK.register(Freecam::preTick);
         ClientTickEvents.END_CLIENT_TICK.register(this::onTickEnd);
