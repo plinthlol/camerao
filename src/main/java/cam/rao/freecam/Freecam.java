@@ -89,6 +89,12 @@ public final class Freecam {
             // ClientInput implementations from other mods are not clobbered.
             mc.player.input = playerInputAtEnable != null ? playerInputAtEnable
                     : new KeyboardInput(mc.options);
+            // Refresh the restored input right away. It was never ticked while free cam was
+            // active, and LocalPlayer.aiStep() reads keyPresses *before* it refreshes them, so
+            // a stale read would leave sneak/sprint one tick behind after exiting.
+            if (mc.player.input instanceof KeyboardInput) {
+                mc.player.input.tick();
+            }
         }
         playerInputAtEnable = null;
         if (rememberedCameraType != null) {
