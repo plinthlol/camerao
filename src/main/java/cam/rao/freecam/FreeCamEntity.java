@@ -140,9 +140,23 @@ public class FreeCamEntity extends AbstractClientPlayer {
     }
 
     // Enables vanilla movement ticking for the fake entity.
+    //
+    // 1.21.11 gates LivingEntity.travel(..) behind canSimulateMovement() && isEffectiveAi(),
+    // and both default to isLocalInstanceAuthoritative(), which is false for this drone:
+    // isLocalClientAuthoritative() only returns true when a *passenger* controls the entity,
+    // and nothing controls ours. Without these overrides the velocity set in doMotion() is
+    // never integrated, so the free cam sits frozen wherever it spawned. (26.3 expressed the
+    // same intent via getMoveSimulationType() == SERVER_AND_CLIENT, which 1.21.11 removed;
+    // there canSimulateMovement() is also what makes Entity.move() legal, so the gate was
+    // loud there, while here it fails silently.)
 
     @Override
     public boolean isEffectiveAi() {
+        return true;
+    }
+
+    @Override
+    public boolean canSimulateMovement() {
         return true;
     }
 
