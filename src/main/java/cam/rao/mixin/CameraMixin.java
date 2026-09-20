@@ -37,12 +37,14 @@ public abstract class CameraMixin {
     protected abstract void setPosition(double x, double y, double z);
 
     /**
-     * 1.21.11 folds the old alignWithEntity into {@code setup}. Call site ordinal 2 of
-     * {@code setRotation} is the main-path rotation (after the eye position is set),
-     * which is where both the perspective rotation lock and the detached parking hook in.
+     * 1.21.11 folds the old alignWithEntity into {@code setup}. The main (non-minecart)
+     * path sets rotation, then the eye position via the single setPosition(DDD) call site.
+     * Hooking right after that call is a stable point where vanilla rotation/position are
+     * final and the detached back-off move hasn't run yet. (setRotation ordinals are
+     * unreliable here: ordinal 2 only executes in detached third-person-reverse mode.)
      */
     @Inject(method = "setup",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setRotation(FF)V", ordinal = 2, shift = At.Shift.AFTER))
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setPosition(DDD)V", shift = At.Shift.AFTER))
     public void camerao$lockRotationAndPark(Level level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
         if (Camerao.isCamDetached) {
             // Detached camera: park position and rotation exactly where the player detached.
