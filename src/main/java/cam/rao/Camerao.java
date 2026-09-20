@@ -96,7 +96,7 @@ public class Camerao implements ClientModInitializer {
 
     private void onTickEnd(Minecraft client) {
         if (configScreenKeyBind.consumeClick()) {
-            client.setScreenAndShow(CameraoConfigScreen.build(client.gui.screen()));
+            client.setScreenAndShow(CameraoConfigScreen.build(client.screen));
         }
 
         // Detach camera keybind: park the camera, keep full player control.

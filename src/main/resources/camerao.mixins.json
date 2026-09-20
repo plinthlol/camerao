@@ -12,7 +12,7 @@
     "ItemInHandRendererMixin",
     "GameRendererMixin",
     "HudMixin",
-    "LevelExtractorMixin",
+    "LevelRendererMixin",
     "LivingEntityMixin",
     "MouseHandlerMixin",
     "MinecraftMixin",
