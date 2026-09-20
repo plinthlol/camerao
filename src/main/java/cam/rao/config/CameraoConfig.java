@@ -52,7 +52,7 @@ public class CameraoConfig {
     }
 
     public synchronized void setPerspective(CameraType perspective) {
-        this.perspective = perspective != null ? CameraType.THIRD_PERSON_BACK : perspective;
+        this.perspective = perspective != null ? perspective : CameraType.THIRD_PERSON_BACK;
     }
 
     public synchronized int getMaxYaw() {

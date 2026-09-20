@@ -15,7 +15,6 @@ public class MouseHandlerMixin {
     public void camerao$onScroll(long windowPointer, double xOffset, double yOffset, CallbackInfo ci) {
         // While in free cam, scroll adjusts the fly speed.
         if (Camerao.isFreeCam) {
-            // Default: scroll down = faster. Invert flips it.
             // Default: scroll up = faster. Invert flips it.
             float exponent = (Camerao.config.isInvertScroll() ? -1.0F : 1.0F) * (float) yOffset;
             float speed = Camerao.freeCamSpeed * (float) Math.pow(1.15, exponent);

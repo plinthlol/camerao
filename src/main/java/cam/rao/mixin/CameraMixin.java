@@ -25,6 +25,10 @@ public abstract class CameraMixin {
     @Unique
     boolean camerao$firstTime = true;
 
+    /** NanoTime of the previous calculateFov call, used for framerate-independent zoom easing. */
+    @Unique
+    long camerao$lastFovNanos = 0L;
+
     @Shadow
     private Entity entity;
 
@@ -78,10 +82,18 @@ public abstract class CameraMixin {
     @Inject(method = "calculateFov", at = @At("RETURN"), cancellable = true)
     public void camerao$zoomFov(float partialTick, CallbackInfoReturnable<Float> cir) {
         float target = Camerao.isZooming ? 100.0F / Camerao.currentZoomMagnification : 1.0F;
-        // Ease the FOV multiplier toward the target for a smooth zoom in and out.
-        Camerao.zoomFovFactor = Mth.lerp(Camerao.ZOOM_FOV_SMOOTHING, Camerao.zoomFovFactor, target);
+        // Ease the FOV multiplier toward the target with an exponential step scaled by
+        // the real frame delta, so the zoom speed is identical at any framerate.
+        long now = System.nanoTime();
+        long last = camerao$lastFovNanos;
+        camerao$lastFovNanos = now;
+        float deltaSeconds = last == 0L ? 1.0F / 60.0F
+                : Mth.clamp((now - last) / 1.0E9F, 0.0F, 0.25F);
+        float blend = 1.0F - (float) Math.exp(-Camerao.ZOOM_FOV_RATE * deltaSeconds);
+        Camerao.zoomFovFactor = Mth.lerp(blend, Camerao.zoomFovFactor, target);
         if (Math.abs(Camerao.zoomFovFactor - 1.0F) < 0.001F && target == 1.0F) {
             Camerao.zoomFovFactor = 1.0F;
+            camerao$lastFovNanos = 0L; // restart timing from a sane delta on the next zoom
             return;
         }
         cir.setReturnValue(cir.getReturnValueF() * Camerao.zoomFovFactor);

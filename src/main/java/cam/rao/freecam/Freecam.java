@@ -17,6 +17,8 @@ public final class Freecam {
     private static boolean enabled;
     private static FreeCamEntity freeCam;
     private static CameraType rememberedCameraType;
+    /** The player's input instance captured at activation, restored on disable. */
+    private static ClientInput playerInputAtEnable;
     /** Whether the player was sneaking when free cam was activated. */
     private static boolean sneakAtEnable;
 
@@ -33,7 +35,7 @@ public final class Freecam {
 
     /** Runs at the start of every client tick: replaces the real player's input with a
      *  blank {@link ClientInput} so it ignores all keys while the camera entity moves freely
-     *  (the original {@link KeyboardInput} is restored in {@link #disable}). With "Keep sneak"
+     *  (the original input instance is restored in {@link #disable}). With "Keep sneak"
      *  on, the sneak state captured at activation is preserved in the blank input. */
     public static void preTick(Minecraft mc) {
         if (enabled && mc.player != null && mc.player.input instanceof KeyboardInput) {
@@ -46,24 +48,16 @@ public final class Freecam {
         }
     }
 
-    public static void toggle(Minecraft mc) {
-        if (enabled) {
-            disable(mc);
-        } else {
-            enable(mc);
-        }
-    }
-
     public static void enable(Minecraft mc) {
         if (mc.player == null || mc.level == null) {
             return;
         }
         mc.smartCull = false;
         rememberedCameraType = mc.options.getCameraType();
+        playerInputAtEnable = mc.player.input;
         sneakAtEnable = mc.player.input.keyPresses.shift();
         // Detached view so you can see your own body right away.
         mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
-        // Spawn one block above the head so the body is in view.
         // Spawn at the player's eye level so the detached camera sits right at your head.
         freeCam = new FreeCamEntity((ClientLevel) mc.level,
                 mc.player.getX(),
@@ -91,8 +85,12 @@ public final class Freecam {
         freeCam = null;
         sneakAtEnable = false;
         if (mc.player != null) {
-            mc.player.input = new KeyboardInput(mc.options);
+            // Restore whatever input instance the player had before freecam, so custom
+            // ClientInput implementations from other mods are not clobbered.
+            mc.player.input = playerInputAtEnable != null ? playerInputAtEnable
+                    : new KeyboardInput(mc.options);
         }
+        playerInputAtEnable = null;
         if (rememberedCameraType != null) {
             mc.options.setCameraType(rememberedCameraType);
             rememberedCameraType = null;

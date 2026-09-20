@@ -55,8 +55,9 @@ public class Camerao implements ClientModInitializer {
     private static boolean smoothCameraBefore = false;
 
     public static final float DEFAULT_ZOOM_DISTANCE = 4.0F;
-    /** Fraction of the remaining FOV transition covered per frame while zooming. */
-    public static final float ZOOM_FOV_SMOOTHING = 0.4F;
+    /** Exponential FOV easing rate (per second) while zooming; equivalent to easing 0.4
+     *  of the remaining distance per frame at 60 FPS, but framerate independent. */
+    public static final float ZOOM_FOV_RATE = (float) (-60.0 * Math.log(1.0 - 0.4));
 
     private KeyMapping perspectiveKeyBind;
     private KeyMapping configScreenKeyBind;
@@ -126,8 +127,10 @@ public class Camerao implements ClientModInitializer {
         }
 
         if (isFreeCam) {
-            if (client.player == null || client.level == null) {
-                stopFreeCam(client);
+            if (client.player == null || client.level == null || client.player.isDeadOrDying()) {
+                // Also exits on death: the death screen sends no further damage events,
+                // so the camera would otherwise keep flying around the corpse.
+                forceStopFreeCam(client);
             }
             // The FreeCamEntity is ticked by vanilla; player input is blanked in preTick.
         }
