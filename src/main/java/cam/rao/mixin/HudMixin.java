@@ -1,6 +1,7 @@
 package cam.rao.mixin;
 
 import cam.rao.Camerao;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -29,5 +31,14 @@ public class HudMixin {
         if (Camerao.isFreeCam) {
             ci.cancel();
         }
+    }
+
+    /** Keeps the crosshair on screen while in free cam. Enabling free cam switches the camera
+     *  to third person (so you can see your own body), and vanilla only draws the crosshair in
+     *  first person - this hook is the early return that makes it vanish. */
+    @Redirect(method = "renderCrosshair", at = @At(value = "INVOKE",
+            target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z"))
+    private boolean camerao$showCrosshairInFreeCam(CameraType cameraType) {
+        return Camerao.isFreeCam || cameraType.isFirstPerson();
     }
 }
