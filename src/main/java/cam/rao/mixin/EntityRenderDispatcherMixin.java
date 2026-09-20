@@ -15,7 +15,7 @@ public class EntityRenderDispatcherMixin {
     /** Hides the free cam entity itself; your own body stays rendered. */
     @Inject(method = "shouldRender", at = @At("HEAD"), cancellable = true)
     public void camerao$shouldRender(Entity entity, Frustum frustum, double camX, double camY,
-                                     double camZ, float partialTicks, CallbackInfoReturnable<Boolean> cir) {
+                                     double camZ, CallbackInfoReturnable<Boolean> cir) {
         if (entity instanceof FreeCamEntity) {
             cir.setReturnValue(false);
         }
