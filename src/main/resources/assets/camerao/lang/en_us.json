@@ -41,7 +41,7 @@
   "camerao.config.zoom_factor": "Default zoom %",
   "camerao.config.zoom_factor.tooltip": "Zoom strength when you press the zoom key.\nExample: 300 zooms to 3x. 100 = no zoom.",
 
-  "camerao.config.show_zoom_indicator": "Show zoom %",
+  "camerao.config.show_zoom_indicator": "Zoom %",
   "camerao.config.show_zoom_indicator.tooltip": "Shows a number above the hotbar while zooming.\nExample: 100% means no zoom, 300% means 3x zoom.",
 
   "camerao.config.invert_scroll": "Invert scroll",
@@ -59,5 +59,5 @@
   "camerao.config.freecam_exit_on_damage": "Exit on damage",
   "camerao.config.freecam_exit_on_damage.tooltip": "Leaves freecam as soon as your body takes damage,\nso you are back in control when attacked.\nWhile in freecam your body also ignores knockback,\nso attackers cannot push it around.\nOff: stay in freecam when hit.",
 
-  "camerao.hud.zoom": "%s%%"
+  "camerao.hud.zoom": "Zoom %s%%"
 }

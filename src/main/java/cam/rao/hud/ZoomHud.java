@@ -24,8 +24,7 @@ public class ZoomHud implements HudElement {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
-        if (!Camerao.config.isShowZoomIndicator()
-                || Camerao.zoomFovFactor >= 0.999F) {
+        if (!Camerao.config.isShowZoomIndicator() || !Camerao.isZooming) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();
