@@ -14,6 +14,9 @@ import java.io.FileWriter;
 public class CameraoConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
+    /** Bumped whenever a new default should also reach configs written by older versions. */
+    public static final int CONFIG_VERSION = 2;
+
     public enum Mode {
         HOLD, TOGGLE
     }
@@ -24,7 +27,7 @@ public class CameraoConfig {
     private int maxPitch = 90;
     private boolean invertY = false;
     private boolean smoothCamera = false;
-    private boolean zoomOut = false;
+    private boolean zoomOut = true;
     private int minZoom = 2;
     private int maxZoom = 32;
     private Mode freeCamMode = Mode.TOGGLE;
@@ -34,6 +37,7 @@ public class CameraoConfig {
     private int zoomMagnification = 300;
     private boolean showZoomIndicator = true;
     private boolean invertScroll = false;
+    private int configVersion = CONFIG_VERSION;
 
     public synchronized Mode getMode() {
         return mode;
@@ -211,6 +215,13 @@ public class CameraoConfig {
             setFreeCamCollision(loaded.freeCamCollision);
             setFreeCamKeepSneak(loaded.freeCamKeepSneak);
             setFreeCamExitOnDamage(loaded.freeCamExitOnDamage);
+            if (loaded.configVersion < CONFIG_VERSION) {
+                // 1.5.1: scroll zoom in perspective is on by default now, so configs written
+                // before this version get it enabled once instead of keeping the old default.
+                setZoomOut(true);
+                configVersion = CONFIG_VERSION;
+                save();
+            }
         } catch (Exception e) {
             Camerao.LOGGER.error("Failed to read config file {}", file.getName(), e);
         }
