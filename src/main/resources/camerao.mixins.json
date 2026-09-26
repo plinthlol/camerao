@@ -17,7 +17,8 @@
     "MouseHandlerMixin",
     "MinecraftMixin",
     "MultiPlayerGameModeMixin",
-    "OptionsMixin"
+    "OptionsMixin",
+      "WhoAmINametagMixin"
   ],
   "injectors": {
     "defaultRequire": 1

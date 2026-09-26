@@ -73,6 +73,10 @@ Changeable in Options → Controls → Key Binds → Camerao.
 | Keep sneak | On |
 | Exit on damage | On |
 
+**Who am I**
+
+| Show own name tag | On |
+| Show in inventory | Off |
 
 ## Screenshots
 
@@ -81,3 +85,4 @@ Changeable in Options → Controls → Key Binds → Camerao.
 ![Zoom settings](https://raw.githubusercontent.com/plinthlol/camerao/26.3/assets/zoomsettings.png)
 
 ![Freecam settings](https://raw.githubusercontent.com/plinthlol/camerao/26.3/assets/freecamsettingspage.png)
+

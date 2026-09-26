@@ -59,5 +59,13 @@
   "camerao.config.freecam_exit_on_damage": "Exit on damage",
   "camerao.config.freecam_exit_on_damage.tooltip": "Leaves freecam as soon as your body takes damage,\nso you are back in control when attacked.\nWhile in freecam your body also ignores knockback,\nso attackers cannot push it around.\nOff: stay in freecam when hit.",
 
-  "camerao.hud.zoom": "Zoom %s%%"
+  "camerao.hud.zoom": "Zoom %s%%",
+
+  "camerao.config.category.whoami": "Who am I",
+
+  "camerao.config.who_am_i": "Show own name tag",
+  "camerao.config.who_am_i.tooltip": "Shows your own player name tag while playing.\nOff hides it again, like vanilla.",
+
+  "camerao.config.show_in_inventory": "Show in inventory",
+  "camerao.config.show_in_inventory.tooltip": "Also shows your name tag while the inventory or another container is open.\nOnly has an effect while Show own name tag is on."
 }

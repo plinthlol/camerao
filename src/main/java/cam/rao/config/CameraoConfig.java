@@ -15,7 +15,7 @@ public class CameraoConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /** Bumped whenever a new default should also reach configs written by older versions. */
-    public static final int CONFIG_VERSION = 2;
+    public static final int CONFIG_VERSION = 3;
 
     public enum Mode {
         HOLD, TOGGLE
@@ -37,6 +37,8 @@ public class CameraoConfig {
     private int zoomMagnification = 300;
     private boolean showZoomIndicator = true;
     private boolean invertScroll = false;
+    private boolean whoAmI = true;
+    private boolean showInInventory = false;
     private int configVersion = CONFIG_VERSION;
 
     public synchronized Mode getMode() {
@@ -139,6 +141,22 @@ public class CameraoConfig {
         this.invertScroll = invertScroll;
     }
 
+    public synchronized boolean isWhoAmI() {
+        return whoAmI;
+    }
+
+    public synchronized void setWhoAmI(boolean whoAmI) {
+        this.whoAmI = whoAmI;
+    }
+
+    public synchronized boolean isShowInInventory() {
+        return showInInventory;
+    }
+
+    public synchronized void setShowInInventory(boolean showInInventory) {
+        this.showInInventory = showInInventory;
+    }
+
     public synchronized boolean isFreeCamToggle() {
         return freeCamMode == Mode.TOGGLE;
     }
@@ -211,6 +229,8 @@ public class CameraoConfig {
             setZoomMagnification(loaded.zoomMagnification);
             setShowZoomIndicator(loaded.showZoomIndicator);
             setInvertScroll(loaded.invertScroll);
+            setWhoAmI(loaded.whoAmI);
+            setShowInInventory(loaded.showInInventory);
             setFreeCamMode(loaded.freeCamMode);
             setFreeCamCollision(loaded.freeCamCollision);
             setFreeCamKeepSneak(loaded.freeCamKeepSneak);
@@ -219,6 +239,10 @@ public class CameraoConfig {
                 // 1.5.1: scroll zoom in perspective is on by default now, so configs written
                 // before this version get it enabled once instead of keeping the old default.
                 setZoomOut(true);
+                // 1.5.2: your own name tag shows by default. Existing configs written before
+                // 1.5.2 would otherwise keep "off" (Gson leaves missing booleans false),
+                // so flip it on once for them instead of silently disabling it.
+                setWhoAmI(true);
                 configVersion = CONFIG_VERSION;
                 save();
             }
