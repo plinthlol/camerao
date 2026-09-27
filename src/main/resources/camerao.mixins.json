@@ -13,6 +13,8 @@
     "GameRendererMixin",
     "HudMixin",
     "LevelRendererMixin",
+    "InventoryScreenMixin",
+    "LivingEntityRendererMixin",
     "LivingEntityMixin",
     "MouseHandlerMixin",
     "MinecraftMixin",
