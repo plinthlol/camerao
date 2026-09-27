@@ -73,6 +73,13 @@ Changeable in Options → Controls → Key Binds → Camerao.
 | Keep sneak | On |
 | Exit on damage | On |
 
+**WhoAmI**
+
+| Option | Default |
+| --- | --- |
+| Activate | On |
+| Show in inventory | Off |
+
 
 ## Screenshots
 

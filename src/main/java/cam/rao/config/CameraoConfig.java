@@ -15,7 +15,7 @@ public class CameraoConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     /** Bumped whenever a new default should also reach configs written by older versions. */
-    public static final int CONFIG_VERSION = 2;
+    public static final int CONFIG_VERSION = 3;
 
     public enum Mode {
         HOLD, TOGGLE
@@ -37,6 +37,10 @@ public class CameraoConfig {
     private int zoomMagnification = 300;
     private boolean showZoomIndicator = true;
     private boolean invertScroll = false;
+    /** Show your own nametag in third person. */
+    private boolean whoAmI = true;
+    /** Also show that nametag on the inventory player preview. */
+    private boolean whoAmIInInventory = false;
     private int configVersion = CONFIG_VERSION;
 
     public synchronized Mode getMode() {
@@ -175,6 +179,22 @@ public class CameraoConfig {
         this.freeCamExitOnDamage = freeCamExitOnDamage;
     }
 
+    public synchronized boolean isWhoAmI() {
+        return whoAmI;
+    }
+
+    public synchronized void setWhoAmI(boolean whoAmI) {
+        this.whoAmI = whoAmI;
+    }
+
+    public synchronized boolean isWhoAmIInInventory() {
+        return whoAmIInInventory;
+    }
+
+    public synchronized void setWhoAmIInInventory(boolean whoAmIInInventory) {
+        this.whoAmIInInventory = whoAmIInInventory;
+    }
+
     public synchronized void save() {
         File folder = new File(Minecraft.getInstance().gameDirectory, "config");
         if (!folder.isDirectory() && !folder.mkdirs()) {
@@ -215,10 +235,22 @@ public class CameraoConfig {
             setFreeCamCollision(loaded.freeCamCollision);
             setFreeCamKeepSneak(loaded.freeCamKeepSneak);
             setFreeCamExitOnDamage(loaded.freeCamExitOnDamage);
-            if (loaded.configVersion < CONFIG_VERSION) {
+            setWhoAmI(loaded.whoAmI);
+            setWhoAmIInInventory(loaded.whoAmIInInventory);
+            boolean migrated = false;
+            if (loaded.configVersion < 2) {
                 // 1.5.1: scroll zoom in perspective is on by default now, so configs written
                 // before this version get it enabled once instead of keeping the old default.
                 setZoomOut(true);
+                migrated = true;
+            }
+            if (loaded.configVersion < 3) {
+                // WhoAmI ships on. Gson leaves a missing boolean false, so older files
+                // get the new default once instead of staying off.
+                setWhoAmI(true);
+                migrated = true;
+            }
+            if (migrated) {
                 configVersion = CONFIG_VERSION;
                 save();
             }
