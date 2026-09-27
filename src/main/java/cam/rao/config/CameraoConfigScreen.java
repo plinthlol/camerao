@@ -159,6 +159,23 @@ public final class CameraoConfigScreen {
                 .setSaveConsumer(config::setFreeCamExitOnDamage)
                 .build());
 
+        var whoAmI = builder.getOrCreateCategory(
+                Component.translatable("camerao.config.category.whoami").withStyle(ChatFormatting.WHITE));
+
+        whoAmI.addEntry(entryBuilder.startBooleanToggle(
+                        label("camerao.config.whoami"),
+                        config.isWhoAmI())
+                .setTooltip(tooltip("camerao.config.whoami.tooltip"))
+                .setSaveConsumer(config::setWhoAmI)
+                .build());
+
+        whoAmI.addEntry(entryBuilder.startBooleanToggle(
+                        label("camerao.config.whoami_inventory"),
+                        config.isWhoAmIInInventory())
+                .setTooltip(tooltip("camerao.config.whoami_inventory.tooltip"))
+                .setSaveConsumer(config::setWhoAmIInInventory)
+                .build());
+
         return builder.build();
     }
 }
