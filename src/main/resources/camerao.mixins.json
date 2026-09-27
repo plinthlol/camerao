@@ -12,6 +12,8 @@
     "FirstPersonHandsAndItemsMixin",
     "GameRendererMixin",
     "HudCrosshairMixin","HudMixin",
+    "InventoryScreenMixin",
+    "LivingEntityRendererMixin",
     "LevelExtractorMixin",
     "LivingEntityMixin",
     "MouseHandlerMixin",
