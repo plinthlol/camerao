@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -30,8 +29,7 @@ public class ZoomHud implements HudElement {
         Minecraft mc = Minecraft.getInstance();
         // Show the target magnification so the number is stable and accurate.
         int percent = Camerao.currentZoomMagnification;
-        Font font = mc.font;
-        graphics.drawCenteredString(font,
+        graphics.drawCenteredString(mc.font,
                 Component.translatable("camerao.hud.zoom", percent).withStyle(ChatFormatting.WHITE),
                 graphics.guiWidth() / 2,
                 graphics.guiHeight() - 59,
