@@ -61,7 +61,7 @@ Changeable in Options → Controls → Key Binds → Camerao.
 | Option | Default |
 | --- | --- |
 | Default zoom % | 300 |
-| Zoom % | On |
+| Zoom % | Off |
 | Invert scroll | Off |
 
 **Freecam**
