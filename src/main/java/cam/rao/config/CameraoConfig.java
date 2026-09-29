@@ -35,7 +35,7 @@ public class CameraoConfig {
     private boolean freeCamKeepSneak = true;
     private boolean freeCamExitOnDamage = true;
     private int zoomMagnification = 300;
-    private boolean showZoomIndicator = true;
+    private boolean showZoomIndicator = false;
     private boolean invertScroll = false;
     /** Show your own nametag in third person. */
     private boolean whoAmI = true;
