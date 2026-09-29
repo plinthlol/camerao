@@ -39,6 +39,12 @@ public abstract class CameraMixin {
     private float eyeHeightOld;
 
     @Shadow
+    private float fovModifier;
+
+    @Shadow
+    private float oldFovModifier;
+
+    @Shadow
     protected abstract void setRotation(float yaw, float pitch);
 
     @Shadow
@@ -106,7 +112,20 @@ public abstract class CameraMixin {
             return;
         }
         if (entity instanceof FreeCamEntity || this.entity instanceof FreeCamEntity) {
+            // Snap both fields to the value the incoming entity will actually use, so
+            // there is no lerp to animate on the first frame after the switch.
             this.eyeHeightOld = this.eyeHeight = entity.getEyeHeight();
+        }
+    }
+
+    /**
+     * Free cam toggles instantly: snap the vanilla FOV modifier instead of letting it ease.
+     * Vanilla eases this every tick, which otherwise shows up as a short swoop on entry.
+     */
+    @Inject(method = "tickFov", at = @At("RETURN"))
+    public void camerao$snapFov(CallbackInfo ci) {
+        if (Camerao.isFreeCam) {
+            this.oldFovModifier = this.fovModifier;
         }
     }
 
