@@ -28,6 +28,12 @@ public abstract class CameraMixin {
     private Entity entity;
 
     @Shadow
+    private float eyeHeight;
+
+    @Shadow
+    private float eyeHeightOld;
+
+    @Shadow
     protected abstract void setRotation(float yaw, float pitch);
 
     @Shadow
@@ -76,6 +82,20 @@ public abstract class CameraMixin {
             return Mth.clamp(Camerao.zoomDistance, min, max);
         }
         return originalDistance;
+    }
+
+    /**
+     * Free cam toggles instantly. This MC version has no tickFov/fovModifier to snap, so
+     * only the eye-height interpolation is collapsed; the position lerp is handled by
+     * FreeCamEntity collapsing its own previous-position fields on spawn.
+     */
+    @Inject(method = "setup",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setPosition(DDD)V", shift = At.Shift.AFTER))
+    public void camerao$snapEyeHeight(Level level, Entity entity, boolean detached,
+                                      boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
+        if (entity instanceof cam.rao.freecam.FreeCamEntity) {
+            this.eyeHeightOld = this.eyeHeight = entity.getEyeHeight();
+        }
     }
 
     /** Detached camera: the camera does not back off with the entity. */

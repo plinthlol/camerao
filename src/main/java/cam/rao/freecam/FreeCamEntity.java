@@ -43,6 +43,11 @@ public class FreeCamEntity extends AbstractClientPlayer {
         // camera never lerps from the standing eye height (1.62) down to 0.4 on spawn.
         setPose(Pose.SWIMMING);
         refreshDimensions();
+        // Collapse the previous-position/rotation fields the camera interpolates
+        // between, so toggling free cam on is instant instead of dragging the view
+        // from the player's last position towards the spawn point.
+        setOldPos();
+        setOldRot();
         xBob = getXRot();
         yBob = getYRot();
         xBobO = xBob;
