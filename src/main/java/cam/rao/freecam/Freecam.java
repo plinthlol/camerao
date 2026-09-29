@@ -14,6 +14,11 @@ import net.minecraft.world.entity.player.Input;
  * disable removes it and restores everything, even if the world changed.
  */
 public final class Freecam {
+    /** Top of the standing player's head above the player's feet. */
+    private static final double PLAYER_HEAD_TOP = 1.8;
+    /** Eye height of the free cam entity itself, fixed by the swimming pose it locks. */
+    private static final double FREECAM_EYE_Y = 0.4;
+
     private static boolean enabled;
     private static FreeCamEntity freeCam;
     private static CameraType rememberedCameraType;
@@ -21,6 +26,8 @@ public final class Freecam {
     private static ClientInput playerInputAtEnable;
     /** Whether the player was sneaking when free cam was activated. */
     private static boolean sneakAtEnable;
+    /** smartCull value captured at activation, restored on disable. */
+    private static boolean smartCullAtEnable;
 
     private Freecam() {
     }
@@ -52,16 +59,21 @@ public final class Freecam {
         if (mc.player == null || mc.level == null) {
             return;
         }
+        smartCullAtEnable = mc.smartCull;
         mc.smartCull = false;
         rememberedCameraType = mc.options.getCameraType();
         playerInputAtEnable = mc.player.input;
         sneakAtEnable = mc.player.input.keyPresses.shift();
         // Detached view so you can see your own body right away.
         mc.options.setCameraType(CameraType.THIRD_PERSON_BACK);
-        // Spawn at the player's eye level so the detached camera sits right at your head.
+        // Spawn so the rendered camera sits one block above the top of the player's
+        // head. The free cam entity has a fixed 0.4 eye height, so its Y must sit
+        // that far below the target; starting clear of the body also stops the camera
+        // from appearing to drop or shift as you enter free cam.
+        double spawnY = mc.player.getY() + PLAYER_HEAD_TOP + 1.0 - FREECAM_EYE_Y;
         freeCam = new FreeCamEntity((ClientLevel) mc.level,
                 mc.player.getX(),
-                mc.player.getEyeY() - 0.4,
+                spawnY,
                 mc.player.getZ(),
                 mc.player.getYRot(),
                 mc.player.getXRot());
@@ -75,7 +87,7 @@ public final class Freecam {
             return; // nothing active - never restore a stale camera type
         }
         enabled = false;
-        mc.smartCull = true;
+        mc.smartCull = smartCullAtEnable;
         if (mc.player != null) {
             mc.setCameraEntity(mc.player);
         }

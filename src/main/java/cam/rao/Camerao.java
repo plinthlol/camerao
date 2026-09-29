@@ -234,6 +234,7 @@ public class Camerao implements ClientModInitializer {
     /** Exits detach when the player cycles perspective with F5. */
     public static void exitDetach() {
         isCamDetached = false;
+        detachRememberedCameraType = null;
     }
 
     private void startPerspective(Minecraft client, CameraType requestedPerspective) {
