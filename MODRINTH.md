@@ -27,6 +27,14 @@ Camera utilities for Fabric
 
 ![Detach camera](https://raw.githubusercontent.com/plinthlol/camerao/26.3/assets/detachcamera.gif)
 
+## Who am I? — nametag in third person
+
+![Who am I](https://raw.githubusercontent.com/plinthlol/camerao/26.3/assets/whoami.png)
+
+Shows your own nametag in third person. Vanilla hides it because the player is the
+camera. Has a separate option to also show it on the player model in the inventory
+screen, which stays unlabeled by default.
+
 ## Keybinds
 
 Changeable in Options → Controls → Key Binds → Camerao.
@@ -72,6 +80,14 @@ Changeable in Options → Controls → Key Binds → Camerao.
 | Collision | Off |
 | Keep sneak | On |
 | Exit on damage | On |
+
+
+**WhoAmI**
+
+| Option | Default |
+| --- | --- |
+| Activate | On |
+| Show in inventory | Off |
 
 
 ## Screenshots
