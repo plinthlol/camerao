@@ -88,12 +88,19 @@ public abstract class CameraMixin {
      * Free cam toggles instantly. This MC version has no tickFov/fovModifier to snap, so
      * only the eye-height interpolation is collapsed; the position lerp is handled by
      * FreeCamEntity collapsing its own previous-position fields on spawn.
+     *
+     * <p>The outgoing entity has to be checked too, not just the incoming one: the eye
+     * height eases toward the camera entity's value every tick, and free cam's entity
+     * reports 0.4 against the player's ~1.62, so leaving free cam would otherwise sink
+     * the camera by that difference and ease it back over several frames. That is the
+     * unshift on exit.
      */
     @Inject(method = "setup",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setPosition(DDD)V", shift = At.Shift.AFTER))
     public void camerao$snapEyeHeight(Level level, Entity entity, boolean detached,
                                       boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
-        if (entity instanceof cam.rao.freecam.FreeCamEntity) {
+        if (entity instanceof cam.rao.freecam.FreeCamEntity
+                || this.entity instanceof cam.rao.freecam.FreeCamEntity) {
             this.eyeHeightOld = this.eyeHeight = entity.getEyeHeight();
         }
     }
