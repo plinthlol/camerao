@@ -97,11 +97,29 @@ public abstract class CameraMixin {
      */
     @Inject(method = "setup",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setPosition(DDD)V", shift = At.Shift.AFTER))
-    public void camerao$snapEyeHeight(Level level, Entity entity, boolean detached,
-                                      boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
-        if (entity instanceof cam.rao.freecam.FreeCamEntity
-                || this.entity instanceof cam.rao.freecam.FreeCamEntity) {
+    public void camerao$snapEyeHeightOnSetup(Level level, Entity entity, boolean detached,
+                                             boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
+        if (entity instanceof cam.rao.freecam.FreeCamEntity) {
             this.eyeHeightOld = this.eyeHeight = entity.getEyeHeight();
+        }
+    }
+
+    /**
+     * Free cam toggles instantly: collapse the eye-height interpolation on the tick after
+     * free cam is released too.
+     *
+     * <p>This has to be handled here and not only at the setPosition call inside setup():
+     * setup() assigns {@code this.entity = entity} before that call, so by the time an
+     * injection there runs the outgoing free cam entity is no longer reachable through this
+     * field, and an "is the current entity free cam" test cannot see it. The camera's
+     * entity is still the freed one here for the tick after teardown, which is the frame
+     * that produced the lingering drop.
+     */
+    @Inject(method = "tick", at = @At("HEAD"))
+    public void camerao$snapEyeHeight(CallbackInfo ci) {
+        if (Camerao.freeCamJustReleased && this.entity != null) {
+            Camerao.freeCamJustReleased = false;
+            this.eyeHeightOld = this.eyeHeight = this.entity.getEyeHeight();
         }
     }
 
