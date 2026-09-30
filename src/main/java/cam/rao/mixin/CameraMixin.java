@@ -72,6 +72,33 @@ public abstract class CameraMixin {
         }
     }
 
+    /**
+     * Free cam toggles instantly: collapse the eye-height interpolation.
+     *
+     * <p>This has to run in setup() because on this MC version Camera.tick() has no call
+     * sites anywhere in the game. eyeHeightOld is only ever assigned in that dead method,
+     * so it stays 0.0 forever and setup() interpolates the eye height from 0.0 toward the
+     * camera entity's value on every frame:
+     *
+     *     Mth.lerp(f, entity.yo, entity.getY()) + Mth.lerp(f, eyeHeightOld, eyeHeight)
+     *
+     * Free cam's entity reports 0.4 (it locks the swimming pose) against the player's
+     * ~1.62, so that interpolation is a permanent visible sweep both entering and leaving
+     * free cam. Assigning both fields to the entity's real eye height removes it.
+     *
+     * <p>The release flag covers the exit, because setup() assigns {@code this.entity =
+     * entity} on its first lines, so the outgoing free cam entity is no longer reachable
+     * through the camera's own field at this point.
+     */
+    @Inject(method = "setup", at = @At("HEAD"))
+    public void camerao$snapEyeHeight(Level level, Entity entity, boolean detached,
+                                      boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
+        if (entity instanceof cam.rao.freecam.FreeCamEntity || Camerao.freeCamJustReleased) {
+            Camerao.freeCamJustReleased = false;
+            this.eyeHeightOld = this.eyeHeight = entity.getEyeHeight();
+        }
+    }
+
     @ModifyArg(method = "setup",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;getMaxZoom(F)F"))
     public float camerao$modifyZoomDistance(float originalDistance) {
@@ -95,34 +122,6 @@ public abstract class CameraMixin {
      * the camera by that difference and ease it back over several frames. That is the
      * unshift on exit.
      */
-    @Inject(method = "setup",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;setPosition(DDD)V", shift = At.Shift.AFTER))
-    public void camerao$snapEyeHeightOnSetup(Level level, Entity entity, boolean detached,
-                                             boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
-        if (entity instanceof cam.rao.freecam.FreeCamEntity) {
-            this.eyeHeightOld = this.eyeHeight = entity.getEyeHeight();
-        }
-    }
-
-    /**
-     * Free cam toggles instantly: collapse the eye-height interpolation on the tick after
-     * free cam is released too.
-     *
-     * <p>This has to be handled here and not only at the setPosition call inside setup():
-     * setup() assigns {@code this.entity = entity} before that call, so by the time an
-     * injection there runs the outgoing free cam entity is no longer reachable through this
-     * field, and an "is the current entity free cam" test cannot see it. The camera's
-     * entity is still the freed one here for the tick after teardown, which is the frame
-     * that produced the lingering drop.
-     */
-    @Inject(method = "tick", at = @At("HEAD"))
-    public void camerao$snapEyeHeight(CallbackInfo ci) {
-        if (Camerao.freeCamJustReleased && this.entity != null) {
-            Camerao.freeCamJustReleased = false;
-            this.eyeHeightOld = this.eyeHeight = this.entity.getEyeHeight();
-        }
-    }
-
     /** Detached camera: the camera does not back off with the entity. */
     @Redirect(method = "setup",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(FFF)V", ordinal = 0))
