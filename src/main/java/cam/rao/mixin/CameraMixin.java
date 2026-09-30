@@ -6,6 +6,7 @@ import cam.rao.freecam.FreeCamEntity;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -119,22 +120,37 @@ public abstract class CameraMixin {
     }
 
     /**
-     * Free cam toggles instantly: snap the vanilla FOV modifier instead of letting it ease.
-     * Vanilla eases this every tick, which otherwise shows up as a short swoop on entry
-     * and on exit. The free cam entity can fly, so its FOV modifier target is 1.1 against
-     * the player's 1.0. On the exit frame the entity is already gone, so the release
-     * flag carries the transition and is consumed here.
+     * Free cam toggles instantly: snap the vanilla FOV modifier to its target instead of
+     * letting it ease. Vanilla recomputes the value every tick as
+     * {@code fovModifier = fovModifier + (target - fovModifier) * 0.5F}, so merely
+     * matching old and new stops the render-time interpolation but the value itself keeps
+     * creeping for several more frames - that is the lingering swoop on exit. The free cam
+     * entity can fly, so its target is 1.1 against the player's 1.0.
+     *
+     * <p>The free cam entity is discarded during teardown, so the release flag carries the
+     * exit frame; it is consumed here.
      */
     @Inject(method = "tickFov", at = @At("RETURN"))
     public void camerao$snapFov(CallbackInfo ci) {
-        if (Camerao.isFreeCam) {
-            this.oldFovModifier = this.fovModifier;
+        boolean released = Camerao.freeCamJustReleased;
+        if (!Camerao.isFreeCam && !released) {
             return;
         }
-        if (Camerao.freeCamJustReleased) {
+        if (released) {
             Camerao.freeCamJustReleased = false;
-            this.oldFovModifier = this.fovModifier;
         }
+        this.fovModifier = this.oldFovModifier = this.camerao$fovTarget();
+    }
+
+    /** The FOV modifier vanilla is easing toward this tick, computed the same way tickFov does. */
+    @Unique
+    private float camerao$fovTarget() {
+        Minecraft mc = Minecraft.getInstance();
+        if (!(mc.getCameraEntity() instanceof AbstractClientPlayer player)) {
+            return 1.0F;
+        }
+        boolean firstPerson = mc.options.getCameraType().isFirstPerson();
+        return player.getFieldOfViewModifier(firstPerson, mc.options.fovEffectScale().get().floatValue());
     }
 
     /** Detached camera: the camera does not back off with the entity. */
