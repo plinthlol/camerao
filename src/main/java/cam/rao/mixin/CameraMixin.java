@@ -120,11 +120,19 @@ public abstract class CameraMixin {
 
     /**
      * Free cam toggles instantly: snap the vanilla FOV modifier instead of letting it ease.
-     * Vanilla eases this every tick, which otherwise shows up as a short swoop on entry.
+     * Vanilla eases this every tick, which otherwise shows up as a short swoop on entry
+     * and on exit. The free cam entity can fly, so its FOV modifier target is 1.1 against
+     * the player's 1.0. On the exit frame the entity is already gone, so the release
+     * flag carries the transition and is consumed here.
      */
     @Inject(method = "tickFov", at = @At("RETURN"))
     public void camerao$snapFov(CallbackInfo ci) {
         if (Camerao.isFreeCam) {
+            this.oldFovModifier = this.fovModifier;
+            return;
+        }
+        if (Camerao.freeCamJustReleased) {
+            Camerao.freeCamJustReleased = false;
             this.oldFovModifier = this.fovModifier;
         }
     }

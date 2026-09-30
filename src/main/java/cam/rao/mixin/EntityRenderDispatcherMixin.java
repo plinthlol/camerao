@@ -1,6 +1,5 @@
 package cam.rao.mixin;
 
-import cam.rao.Camerao;
 import cam.rao.freecam.FreeCamEntity;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
