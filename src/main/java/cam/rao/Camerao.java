@@ -37,6 +37,12 @@ public class Camerao implements ClientModInitializer {
 
     public static boolean isFreeCam = false;
     public static boolean isCamDetached = false;
+    /**
+     * Set when free cam is torn down, so the camera can snap its FOV on the way out.
+     * The free cam entity is discarded during teardown, so this flag has to carry the
+     * exit frame; it is cleared by the camera mixin once it has been acted on.
+     */
+    public static boolean freeCamJustReleased = false;
     /** Parked camera position and rotation while detached. */
     public static float detachedX;
     public static float detachedY;
@@ -86,10 +92,18 @@ public class Camerao implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register(Freecam::preTick);
         ClientTickEvents.END_CLIENT_TICK.register(this::onTickEnd);
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
+            boolean wasActive = isFreeCam;
             isFreeCam = false;
             Freecam.disable(client);
             freeCamSpeed = FREECAM_DEFAULT_SPEED;
             isCamDetached = false;
+            // No camera renders after a disconnect, so drop the release flag with the rest.
+            freeCamJustReleased = wasActive;
+            // Zoom state is only refreshed on a client tick, so clear it here too or a
+            // disconnect mid-zoom carries a stale FOV factor into the next session.
+            isZooming = false;
+            zoomFovFactor = 1.0F;
+            currentZoomMagnification = config.getZoomMagnification();
         });
         ZoomHud.register();
     }
@@ -186,10 +200,14 @@ public class Camerao implements ClientModInitializer {
 
     /** Tears down free cam and restores the real player; safe to call from mixins on the main thread. */
     public static void forceStopFreeCam(Minecraft client) {
+        boolean wasActive = isFreeCam;
         // Clear the flag first so OptionsMixin does not eat the camera restore inside disable().
         isFreeCam = false;
         Freecam.disable(client);
         freeCamSpeed = FREECAM_DEFAULT_SPEED;
+        // Freecam.disable() restores the camera entity before the next frame renders, so
+        // mark the release for the FOV snap on that frame.
+        freeCamJustReleased = wasActive;
     }
 
     public static FreeCamEntity getActiveDrone() {

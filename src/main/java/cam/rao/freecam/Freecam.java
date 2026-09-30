@@ -56,6 +56,9 @@ public final class Freecam {
     }
 
     public static void enable(Minecraft mc) {
+        if (enabled) {
+            return; // already active - never spawn a second entity or overwrite the captures
+        }
         if (mc.player == null || mc.level == null) {
             return;
         }
