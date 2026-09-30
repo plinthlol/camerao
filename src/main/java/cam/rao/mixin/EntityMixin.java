@@ -32,10 +32,12 @@ public class EntityMixin implements CameraDuck {
     @Inject(method = "turn", at = @At("HEAD"), cancellable = true)
     public void camerao$changeCameraLookDirection(double xDelta, double yDelta, CallbackInfo ci) {
         if (Camerao.isFreeCam && (Object) this == Minecraft.getInstance().player) {
-            // Route mouse look to the free cam instead of the player.
+            // Route mouse look to the free cam instead of the player. Free cam is always
+            // third person at full FOV, so mouse deltas pass through unscaled; the zoom
+            // key does not affect this view.
             FreeCamEntity freeCam = Freecam.getFreeCam();
             if (freeCam != null) {
-                freeCam.turn(xDelta * Camerao.zoomFovFactor, yDelta * Camerao.zoomFovFactor);
+                freeCam.turn(xDelta, yDelta);
             }
             ci.cancel();
         } else if (Camerao.isPerspectiveActive && (Object) this instanceof LocalPlayer) {
