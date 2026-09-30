@@ -90,6 +90,11 @@ public class Camerao implements ClientModInitializer {
             Freecam.disable(client);
             freeCamSpeed = FREECAM_DEFAULT_SPEED;
             isCamDetached = false;
+            // Zoom state is only refreshed on a client tick, so clear it here too or a
+            // disconnect mid-zoom carries a stale FOV factor into the next session.
+            isZooming = false;
+            zoomFovFactor = 1.0F;
+            currentZoomMagnification = config.getZoomMagnification();
         });
         ZoomHud.register();
     }
